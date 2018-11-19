@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Frontend Coding Challenge</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/node_modules/bulma/css/bulma.min.css">
+        <link rel="stylesheet" href="/app/app.css">
+        <script defer src="/node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
+    </head>
+    <body>
+        <main id="app">
+            <section class="section" v-if="!hasUsers">
+                <div class="container">
+                    <div class="notification is-danger">
+                        There are no users selected. Please, use the settings in order to add users.
+                    </div>
+                </div>
+            </section>
+            <section class="section" v-if="hasUsers">
+                <div class="container">
+                    <div class="columns">
+                        <div class="column" v-for="userTweets in tweets">
+                            <profile :user="userTweets[0].user"></profile>
+                            <div class="scrollable">
+                                <article class="media" v-for="tweet in userTweets">
+                                    <tweet :tweet="tweet"></tweet>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="section">
+                <div id="settings-btn">
+                    <a class="button is-rounded is-primary" @click="openSettings">
+                        <span class="icon is-small">
+                            <i class="fas fa-cogs"></i>
+                        </span>
+                        <span class="is-hidden-mobile">Settings</span>
+                    </a>
+                </div>
+                <div class="modal" :class="{ 'is-active': settingsMode }">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <section class="modal-card-body">
+                            <div class="field">
+                                <label class="label">Tweets from users: (up to 4)</label>
+                            </div>
+                            <p class="buttons">
+                                <a class="button is-danger is-outlined" v-for="user in defaultUsers" @click="removeUser(user)">
+                                    <span>{{ user }}</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-times"></i>
+                                    </span>
+                                </a>
+                            </p>
+                            <div class="field has-addons" v-if="defaultUsers.length < 4">
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" v-model="newUser" placeholder="Twitter Screen Name">
+                                    <span class="icon is-small is-left">
+                                        <i class="fab fa-twitter"></i>
+                                    </span>
+                                </div>
+                                <div class="control">
+                                    <a class="button is-info" @click="addUser">
+                                        Add
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">How many tweets to load:</label>
+                                <div class="control">
+                                    <div class="select">
+                                        <select @change="changeLoadTweetsCount" v-model="loadTweetsCount">
+                                            <option v-for="index in [5, 10, 20, 30, 50]" :value="index">
+                                                Load {{ index }} tweets from user
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button class="button is-primary" @click="applySettings">Apply Settings</button>
+                        </footer>
+                    </div>
+                    <button class="modal-close is-large" aria-label="close" @click="closeSettings"></button>
+                </div>
+            </section>
+        </main>
+        <script src="/node_modules/vue/dist/vue.js"></script>
+        <script src="/node_modules/axios/dist/axios.min.js"></script>
+        <script src="/node_modules/moment/min/moment.min.js"></script>
+        <script src="/app/Filters.js"></script>
+        <script src="/app/Components/TweetLink.js"></script>
+        <script src="/app/Components/ScreenName.js"></script>
+        <script src="/app/Components/Profile.js"></script>
+        <script src="/app/Components/Tweet.js"></script>
+        <script src="/app/app.js"></script>
+    </body>
+</html>
+
